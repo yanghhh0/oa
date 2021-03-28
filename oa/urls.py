@@ -19,8 +19,12 @@ from oa import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path(r'index/', views.index, name='index'),
     path(r'login/', views.login, name='login'),
     path(r'register/', views.register, name='register'),
-
+    path(r'teacher/', views.teacher, name='teacher'),
+    path(r'data/', views.data, name='data'),
+    path(r'check/', views.check, name='check'),
+    path(r'manage/', views.manage, name='manage'),
+    path(r'notice/', views.notice, name='notice'),
+    path(r'qrcode/', views.make_qrcode, name='qrcode')
 ]

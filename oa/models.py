@@ -1,5 +1,7 @@
+# -*- coding: utf-8 -*-
+
+
 from django.db import models
-from datetime import datetime
 from django.utils import timezone
 
 
@@ -21,37 +23,40 @@ class MajorInfo(models.Model):
 
 class Teacher(models.Model):
     # 教师信息表 字段：教师编号，手机号，姓名，邮箱，密码
-    uid = models.IntegerField(null=False)
+    uid = models.AutoField(null=False, primary_key=True)
     phone = models.CharField(max_length=11)
     name = models.CharField(max_length=15)
     email = models.EmailField(null=False)
     password = models.CharField(max_length=64)
 
+    class Meta:
+        db_table = 'teacher'
 
-class Class(models.Model):
-    # 课程信息表 字段:课程编号，课程名称，教师编号
-    uid = models.IntegerField(null=False)
+    def __str__(self):
+        return self.uid
+
+
+class Course(models.Model):
+    # 课程信息表 字段:课程编号，课程名称，教师编号，课程其余信息
+    uid = models.AutoField(null=False, primary_key=True)
     name = models.CharField(max_length=15)
-    t_uid = models.ForeignKey(Teacher.uid, on_delete=models.CASCADE)
+    t_uid = models.ForeignKey('Teacher', on_delete=models.CASCADE)
+    info = models.TextField()
 
 
 class UserInfo(models.Model):
-    # 创建用户模型，学号,密码，班级，姓名,昵称，专业,用户类型,电话，姓名,座右铭,邮件
+    # 创建用户模型，学号,密码，班级，姓名,专业,电话，姓名,座右铭,邮件
     studentNum = models.CharField(max_length=15, primary_key=True)
     password = models.CharField(max_length=64)
-    username = models.CharField(max_length=15)
+    name = models.CharField(max_length=15)
     cid = models.ForeignKey('ClassInfo', null=True, on_delete=models.CASCADE)
-    nickname = models.CharField(max_length=30, null=True)
     major = models.ForeignKey('MajorInfo', null=True, on_delete=models.CASCADE)
-    hobby = models.CharField(max_length=30, null=True)
-    age = models.IntegerField(null=True)
     gender = models.IntegerField(default=1)
     phone = models.CharField(max_length=11)
-    motto = models.TextField(null=True)
     email = models.EmailField(null=False)
 
     def __str__(self):
-        return self.username
+        return self.name
 
 
 # 签到表设计
@@ -69,7 +74,7 @@ class Attendence(models.Model):
     leave_count = models.IntegerField(default=0)
 
     def __str__(self):
-        return self.stu.username
+        return self.stu.name
 
 
 # 公告表设计

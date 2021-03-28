@@ -174,7 +174,7 @@ $(function () {/* 文档加载，执行一个函数*/
             // Use Ajax to submit form data 提交至form标签中的action，result自定义
             $.post('/register_verify/', $form.serialize(), function (result) {
 //do something...
-                if(result == 'OK'){
+                if(result === 'OK'){
                     window.location.href='/login/'
                 }
             });
