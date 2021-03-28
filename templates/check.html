@@ -3,19 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <title>check</title>
-    <script type="text/javascript" src="__PUBLIC__/js/jquery.qrcode.min.js"
+    <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.qrcode.min.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <body>
 <div class="row">
     <div class="vertical-align-middle" id="showQRCode" align="center">
-        <img src="{% url 'qrcode'%}" width="420px" height="420px">
+        <img id="qrcode" width="420" height="420">
+        <span id="info"></span>
     </div>
+    <button onclick="getQRCode()">开始</button>
+    <span id="info"></span>
 </div>
 </body>
 <script type="text/javascript">
-    function timer(){
-        var
+    let kk=0;
+    function getQRCode(){
+        setTimeout(getQRCode, 5000)
+        $.ajax(
+            {
+                url:'/qrcode',
+                method:'get',
+                success: function (){
+                    $('#qrcode').removeAttr("src")
+                    $('#qrcode').attr('src', '/qrcode')
+                    document.getElementById('info').innerText = kk.toString();
+                    kk++;
+                }
+            }
+        )
+
     }
+
 </script>
 
 </html>
