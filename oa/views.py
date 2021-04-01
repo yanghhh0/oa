@@ -63,7 +63,7 @@ def check(request):
 
 def make_qrcode(request):
     tm = int(time.time())
-    url = HOST + f"time={tm}"
+    url = HOST + "time=%s" % tm
     img = qrcode.make(url)
     buf = BytesIO()
     img.save(buf)
