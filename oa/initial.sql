@@ -6,7 +6,7 @@ create table if not exists MajorInfo(
     name varchar(20) not null
 )
 
-create table if not exists Teacher(
+create table if not exists teacher(
     uid int not null,
     phone varchar(11) not null,
     name varchar(20) not null,

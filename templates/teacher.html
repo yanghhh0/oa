@@ -4,32 +4,47 @@
     <meta charset="UTF-8">
     <title>欢迎使用</title>
     <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/teacher.css">
+    <link rel="stylesheet" href="/static/css/normal.css">
+    <link rel="stylesheet" href="/static/css/hover.css">
     <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 </head>
 <body>
-<div class="container-fluid">
-    <div class="row hh">
-        title
+<div>
+    <!-- 头部 -->
+    <div class="header">
+            <div class="logo">
+                考勤管理系统
+            </div>
+            <div class="head-right">
+                33
+            </div>
+
+
     </div>
-    <div class="row">
-        <div class="col-sm-3 col-md-2 sidebar">
-            <ul class="nav nav-sidebar">
-                <li><a href="/check/">发起签到</a></li>
-                <li><a href="/data/">查看数据</a>
+    <!-- 侧边栏 -->
+    <div class="side">
+            <ul class="side-items">
+                <li class="side-item hvr-border-fade" title="发起签到">
+                    <a href="/check/">发起签到</a>
                 </li>
-                <li><a href="/notice/">请假通知</a></li>
-                <li><a href="/manage/">设置名单</a></li>
+                <li class="side-item hvr-border-fade" title="查看数据">
+                    <a href="/data/">查看数据</a>
+                </li>
+                <li class="side-item hvr-border-fade" title="请假通知">
+                    <a href="/notice/">请假通知</a>
+                </li>
+                <li class="side-item hvr-border-fade" title="设置名单">
+                    <a href="/manage/">设置名单</a>
+                </li>
 
             </ul>
-            <hr>
-        </div>
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-            {% block content %}
-            {% endblock content %}
-        </div>
         <!--面板底部结束-->
+    </div>
+    <div class="div-main">
+        233
     </div>
 
 </div>
