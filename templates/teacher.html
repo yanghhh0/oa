@@ -1,53 +1,97 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>欢迎使用</title>
-    <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/static/css/teacher.css">
-    <link rel="stylesheet" href="/static/css/normal.css">
-    <link rel="stylesheet" href="/static/css/hover.css">
-    <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
-    <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>教师</title>
+  <link rel="stylesheet" href="/static/css/layui.css">
 </head>
 <body>
-<div>
-    <!-- 头部 -->
-    <div class="header">
-            <div class="logo">
-                考勤管理系统
-            </div>
-            <div class="head-right">
-                33
-            </div>
+<div class="layui-layout layui-layout-admin">
+  <div class="layui-header">
+    <div class="layui-logo">考勤管理系统</div>
+    <!-- 头部区域（可配合layui 已有的水平导航） -->
+    <ul class="layui-nav layui-layout-left">
+      <li class="layui-nav-item"><a href="">nav 1</a></li>
+      <li class="layui-nav-item"><a href="">nav 2</a></li>
+      <li class="layui-nav-item"><a href="">nav 3</a></li>
+      <li class="layui-nav-item">
+        <a href="javascript:;">nav groups</a>
+        <dl class="layui-nav-child">
+          <dd><a href="">menu 11</a></dd>
+          <dd><a href="">menu 22</a></dd>
+          <dd><a href="">menu 33</a></dd>
+        </dl>
+      </li>
+    </ul>
+    <ul class="layui-nav layui-layout-right">
+      <li class="layui-nav-item">
+        <a href="javascript:;">
+          <img src="//tva1.sinaimg.cn/crop.0.0.118.118.180/5db11ff4gw1e77d3nqrv8j203b03cweg.jpg" class="layui-nav-img">
+            {{ name }}
+        </a>
+        <dl class="layui-nav-child">
+          <dd><a href="">个人中心</a></dd>
+          <dd><a href="">修改密码</a></dd>
+        </dl>
+      </li>
+      <li class="layui-nav-item"><a href="">退出登录</a></li>
+    </ul>
+  </div>
 
-
+  <div class="layui-side layui-bg-black">
+    <div class="layui-side-scroll">
+      <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+      <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+        <li class="layui-nav-item layui-nav-itemed">
+          <a class="" href="javascript:;">配置名单</a>
+          <dl class="layui-nav-child">
+            <dd><a href="javascript:;">增加名单</a></dd>
+            <dd><a href="javascript:;">查看名单</a></dd>
+          </dl>
+        </li>
+        <li class="layui-nav-item">
+          <a href="javascript:;">发起签到</a>
+          <dl class="layui-nav-child">
+            <dd><a href="javascript:;">list 2-1</a></dd>
+            <dd><a href="javascript:;">list 2-2</a></dd>
+            <dd><a href="">超链接</a></dd>
+          </dl>
+        </li>
+        <li class="layui-nav-item"><a href="javascript:;">查看数据</a></li>
+        <li class="layui-nav-item"><a href="">关于</a></li>
+      </ul>
     </div>
-    <!-- 侧边栏 -->
-    <div class="side">
-            <ul class="side-items">
-                <li class="side-item hvr-border-fade" title="发起签到">
-                    <a href="/check/">发起签到</a>
-                </li>
-                <li class="side-item hvr-border-fade" title="查看数据">
-                    <a href="/data/">查看数据</a>
-                </li>
-                <li class="side-item hvr-border-fade" title="请假通知">
-                    <a href="/notice/">请假通知</a>
-                </li>
-                <li class="side-item hvr-border-fade" title="设置名单">
-                    <a href="/manage/">设置名单</a>
-                </li>
+  </div>
 
-            </ul>
-        <!--面板底部结束-->
-    </div>
-    <div class="div-main">
-        233
-    </div>
+  <div class="layui-body">
+    <!-- 内容主体区域 -->
+    <iframe src="/check/" id="main" width="100%" style="height: 99.9%" frameborder="0"></iframe>
 
+  </div>
+
+  <div class="layui-footer">
+    <!-- 底部固定区域 -->
+      <p class="layui-layout-right">author:yanghhh</p>
+  </div>
 </div>
-<!--面板结束-->
+
+<script src="/static/layui.js"></script>
+
+
+<script>
+//JavaScript代码区域
+layui.use(['element','jquery'], function(){
+  var $=layui.jquery;
+  var element = layui.element;
+  $(document).ready(function(){
+  $("dd>a").click(function (e) {
+      e.preventDefault();//取消事件的默认动作。
+      $("#main").attr("src",$(this).attr("href"));
+    });
+  });
+  // $("#cloud").click(function(){$("#main").html("jaosgoaighowg");});
+});
+</script>
 </body>
 </html>

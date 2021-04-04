@@ -1,5 +1,5 @@
 .header{
-    height: 70px;
+    height: 80px;
     vertical-align: center;
 }
 
@@ -22,17 +22,17 @@
 
 .head-right{
     position: absolute!important;
-    right: 200px;
+    right: 100px;
     top: 0;
-    line-height: 80px;
+    line-height: 60px;
     -webkit-transition: all .3s;
-    box-shadow: 1px 0 2px 0 rgba(0, 0, 0, .05);
 }
 
 .head-item{
     display: inline-block;
     vertical-align: middle;
     line-height: 80px;
+    margin: 0 auto;
 }
 
 .side{
@@ -76,5 +76,5 @@
     display: block;
     position: fixed;
     left: 220px;
-    top: 70px;
+    top: 85px;
 }

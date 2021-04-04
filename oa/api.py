@@ -4,6 +4,7 @@ from functools import wraps
 from django.shortcuts import render
 
 from oa.models import Teacher
+from datetime import date, time, datetime
 
 
 def check_login(email, password):
@@ -40,6 +41,17 @@ def is_login(func):
             return render(request, 'login.html', {'error_msg': ''})
     return inner
 
+
+def model_to_dict(model_obj):
+    """
+    将一个model对象转换成字典
+    """
+    att_dict = {}
+    for field in model_obj._meta.fields:
+        name = field.attname  # 获取字段名
+        value = getattr(model_obj, name)  # 获取对象属性
+        att_dict[name] = value  # 生成字典
+    return att_dict
 
 
 

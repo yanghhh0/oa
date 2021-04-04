@@ -1,3 +1,5 @@
+import json
+
 from django.utils.six import BytesIO
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
@@ -5,7 +7,8 @@ from django.views.decorators.csrf import csrf_exempt
 
 import qrcode
 import time
-from api import is_login, check_cookie, check_login
+from api import is_login, check_cookie, check_login, model_to_dict
+from django.views.decorators.clickjacking import xframe_options_sameorigin
 
 HOST = '127.0.0.1?'
 
@@ -49,23 +52,29 @@ def register(request):
         return render(request, 'register.html')
 
 
-@is_login
 def teacher(request):
-    return render(request, 'teacher.html')
+    flag, rank = check_cookie(request)
+    rank = model_to_dict(rank)
+    print(json.dumps(rank))
+    return render(request, 'teacher.html', rank)
 
 
+@xframe_options_sameorigin
 def notice(request):
     return render(request, 'notice.html')
 
 
+@xframe_options_sameorigin
 def manage(request):
     return render(request, 'manage.html')
 
 
+@xframe_options_sameorigin
 def data(request):
     return render(request, 'data.html')
 
 
+@xframe_options_sameorigin
 def check(request):
     return render(request, 'check.html')
 
