@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>设置签到</title>
+    <link rel="stylesheet" href="/static/css/layui.css"  media="all">
+</head>
+<body>
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+  <legend>签到信息设置</legend>
+</fieldset>
+<form class="layui-form" action="/check/" type="post">
+    <div class="layui-form-item">
+        <label class="layui-form-label">名单选择</label>
+        <div class="layui-input-block">
+            <select name="class_list" lay-filter="class_list" style="display: block;">
+                {% for cls in class_list %}
+                    <option value={{ cls }}>{{ cls }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">持续时间</label>
+        <div class="layui-input-block">
+          <input type="text" name="during_time" lay-verify="title" autocomplete="off" placeholder="秒" class="layui-input" style="width: auto">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+          <button type="submit" class="layui-btn" lay-submit="" lay-filter="go_check">立即提交</button>
+        </div>
+    </div>
+</form>
+</body>
+</html>

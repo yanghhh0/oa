@@ -26,5 +26,8 @@ urlpatterns = [
     path(r'check/', views.check, name='check'),
     path(r'manage/', views.manage, name='manage'),
     path(r'notice/', views.notice, name='notice'),
-    path(r'qrcode/', views.make_qrcode, name='qrcode')
+    path(r'qrcode/', views.make_qrcode, name='qrcode'),
+    path(r'stuLogin/', views.stu_login, name='stuLogin'),
+    path(r'stuIndex/', views.stu_index, name='stuIndex'),
+    path(r'checkSetting/', views.check_setting, name='checkSetting')
 ]

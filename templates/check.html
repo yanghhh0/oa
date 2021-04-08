@@ -9,6 +9,7 @@
 </head>
 <body bgcolor="aqua">
 <div class="row">
+    <p>{{ dt }}</p>
     <div class="vertical-align-middle" id="showQRCode" align="center">
         <img id="qrcode" width="420" height="420">
         <span id="info"></span>
@@ -19,20 +20,14 @@
 </body>
 <script type="text/javascript">
     let kk=0;
+    let cls={{ class_list }};
+    let drt={{ during_time }};
     function getQRCode(){
         setTimeout(getQRCode, 5000)
-        $.ajax(
-            {
-                url:'/qrcode',
-                method:'get',
-                success: function (){
-                    $('#qrcode').removeAttr("src")
-                    $('#qrcode').attr('src', '/qrcode')
-                    document.getElementById('info').innerText = kk.toString();
-                    kk++;
-                }
-            }
-        )
+        $('#qrcode').removeAttr("src");
+        $('#qrcode').attr('src', `/qrcode/?class_list=${cls}&during_time=${drt}&time=${new Date().getTime()}`);
+        document.getElementById('info').innerText = kk.toString();
+        kk++;
 
     }
 
