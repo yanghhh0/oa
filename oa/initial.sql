@@ -7,7 +7,7 @@ create table if not exists MajorInfo(
 )
 
 create table if not exists teacher(
-    uid int not null,
+    uid int not null auto_increment,
     phone varchar(11) not null,
     name varchar(20) not null,
     email varchar(50) not null,

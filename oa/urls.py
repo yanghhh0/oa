@@ -20,6 +20,7 @@ from oa import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path(r'login/', views.login, name='login'),
+    path(r'logout/', views.logout, name='logout'),
     path(r'register/', views.register, name='register'),
     path(r'teacher/', views.teacher, name='teacher'),
     path(r'data/', views.data, name='data'),
@@ -29,5 +30,8 @@ urlpatterns = [
     path(r'qrcode/', views.make_qrcode, name='qrcode'),
     path(r'stuLogin/', views.stu_login, name='stuLogin'),
     path(r'stuIndex/', views.stu_index, name='stuIndex'),
-    path(r'checkSetting/', views.check_setting, name='checkSetting')
+    path(r'checkSetting/', views.check_setting, name='checkSetting'),
+    path(r'checkHistory/', views.check_history, name='checkHistory'),
+    path(r'getCheckTable/', views.get_record_table, name='getCheckTable')
+
 ]

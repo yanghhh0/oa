@@ -52,17 +52,50 @@ class Student(models.Model):
         return self.uid
 
 
-class Course(models.Model):
+class Item(models.Model):
     # 课程信息表 字段:课程编号，课程名称，教师编号，课程其余信息
     uid = models.AutoField(null=False, primary_key=True)
     name = models.CharField(max_length=15)
-    t_uid = models.ForeignKey('Teacher', on_delete=models.CASCADE)
-    info = models.TextField()  # json形式表示额外数据
+    t_uid = models.IntegerField(null=False)
+    info = models.JSONField()  # json形式表示额外数据
+
+    class Meta:
+        db_table = 'item'
+
+    def __str__(self):
+        return self.uid
 
 
-# class CheckRecord(models.Model):
-#     uid = models.AutoField(null=False, primary_key=True)
-#     check_time = models.IntegerField(max_length=18)
+class CheckInfo(models.Model):
+    # 某次签到的信息
+    check_id = models.AutoField(null=False, primary_key=True)
+    t_uid = models.IntegerField(null=False)
+    check_time = models.IntegerField(null=False)
+    checked_count = models.IntegerField(null=False)
+    total_count = models.IntegerField(null=False)
+    item_id = models.IntegerField(null=False)
+
+    class Meta:
+        db_table = 'check_info'
+
+
+class CheckRecord(models.Model):
+    # 签到记录
+    check_id = models.IntegerField(null=False)  # 签到id
+    uid = models.IntegerField(null=False)  # 签到人id
+    check_time = models.IntegerField(null=False)  # 签到时间
+
+    class Meta:
+        db_table = 'check_record'
+
+
+class StuItem(models.Model):
+    # 名单详细
+    item_id = models.IntegerField(null=False)
+    stu_id = models.IntegerField(null=False)
+
+    class Meta:
+        db_table = 'stu_item'
 
 
 

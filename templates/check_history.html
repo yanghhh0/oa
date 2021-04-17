@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>历史签到</title>
+  <link rel="stylesheet" href="/static/css/layui.css" media="all">
+</head>
+<body>
+
+<table id="dataTable" lay-filter="test"></table>
+
+<script src="/static/layui.js"></script>
+<script>
+layui.use('table', function(){
+  var table = layui.table;
+
+  //第一个实例
+  table.render({
+    elem: '#dataTable'
+    ,height: 312
+    ,url: '/getCheckTable/' //数据接口
+    ,page: true //开启分页
+    ,cols: [[ //表头
+      {field: 'check_id', title: 'ID', width:80, sort: true, fixed: 'left'}
+      ,{field: 'check_item', title: '名单', width: 80}
+      ,{field: 'check_time', title: '日期时间', width:180}
+      ,{field: 'checked_count', title: '签到人数', width:120, sort: true}
+      ,{field: 'total_count', title: '名单人数', width:120}
+      ,{field: 'unchecked_stu', title: '未签到人', width: 200, sort: true}
+    ]]
+  });
+
+});
+</script>
+</body>
+</html>

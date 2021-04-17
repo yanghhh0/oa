@@ -9,7 +9,7 @@ import qrcode
 import time
 
 from oa.api import is_login, check_cookie, check_login, model_to_dict, check_stu_login, \
-    check_stu_login_cookie, url_change
+    check_stu_login_cookie, url_change, search_items, student_check, get_check_record_table
 from django.views.decorators.clickjacking import xframe_options_sameorigin
 
 HOST = '127.0.0.1?'
@@ -80,7 +80,11 @@ def data(request):
 
 @xframe_options_sameorigin
 def check(request):
-    dt = request.GET.dict()
+    keys = request.GET.keys()
+    dt = dict()
+    for key in keys:
+        dt[key] = request.GET[key]
+    print(dt)
     return render(request, 'check.html', dt)
 
 
@@ -93,6 +97,7 @@ def logout(request):
 
 def make_qrcode(request):
     print(request)
+    print(111)
     dt = request.GET.dict()
     url = f"http://192.168.36.143:8000/stu_index/"
     url = url_change(url, dt)
@@ -140,16 +145,42 @@ def stu_index(request):
     if not flag:
         return render(request, 'stu_login.html')
     rank = model_to_dict(rank)
-
-    return render(request, 'stu_index.html', rank)
+    check_time = request.GET['time']
+    t = time.time()
+    t = int(round(t * 1000))
+    if check_time - t > 15 * 1000:
+        return render(request, 'stu_index.html', {'res_msg': '二维码已过期'})
+    res = student_check(rank['uid'], request.GET['cls_id'], request.GET['check_id'])
+    return render(request, 'stu_index.html', {'res_msg': res})
 
 
 @xframe_options_sameorigin
 def check_setting(request):
     dt = dict()
-    dt['class_list'] = ['171', '172', '173']
+    print(request.GET)
+    items = search_items(request.GET['uid'])
+    dt['class_list'] = [item['name'] for item in items]
+    print(dt)
     return render(request, 'check_setting.html', dt)
 
+
+@xframe_options_sameorigin
+def check_history(request):
+    return render(request, 'check_history.html')
+
+
+def get_record_table(request):
+    flag, rank = check_cookie(request)
+    if not flag:
+        return render(request, 'login.html', {'error_msg': ''})
+    uid = model_to_dict(rank).get('uid')
+    table = get_check_record_table(uid)
+    test_data = {"check_id": 1, "check_item": "计算机171", "check_time": "2021/4/17/15:30", "checked_count": 20,
+                 "total_count": 21, "unchecked_stu": ['石头人']}
+    table.append(test_data)
+    res = {"code": 0, "msg": "", "count": len(table), "data": table}
+    res = json.dumps(res)
+    return HttpResponse(res)
 
 
 
