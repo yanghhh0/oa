@@ -194,3 +194,25 @@ def find_unchecked_name_list(objs):
             obj['unchecked_stu'].append(Student.objects.get(uid=stu_id).name)
     return objs
 
+
+# 处理名单显示
+def items_to_table(items):
+    for item in items:
+        item['stu'] = []
+        stu_objects = StuItem.objects.filter(item_id=item['uid'])
+        for stu in stu_objects:
+            item['stu'].append(Student.objects.get(uid=stu.stu_id).name)
+    return items
+
+
+# 改变名单 0:add, 1:delete, 2:update TODO
+def update_item(t_uid, name, op, uid=-1):
+    if uid == -1:
+        Item.objects.create(name=name, t_uid=t_uid)
+    elif op == 1:
+        Item.objects.filter(uid=uid).delete()
+        StuItem.objects.filter(item_id=uid).delete()
+        return
+    else:
+        return
+

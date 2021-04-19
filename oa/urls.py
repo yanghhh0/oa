@@ -32,6 +32,11 @@ urlpatterns = [
     path(r'stuIndex/', views.stu_index, name='stuIndex'),
     path(r'checkSetting/', views.check_setting, name='checkSetting'),
     path(r'checkHistory/', views.check_history, name='checkHistory'),
-    path(r'getCheckTable/', views.get_record_table, name='getCheckTable')
+    path(r'getCheckTable/', views.get_record_table, name='getCheckTable'),
+    path(r'getItems/', views.get_items, name='getItems'),
+    path(r'searchItem/', views.search_item, name='searchItem'),
+    path(r'searchItem/addItem/', views.add_item, name='addItem'),
+    # path(r'searchItem/changeItem/', views.add_item, name='changeItem'),
+    path(r'searchItem/delItem/', views.del_item, name='delItem'),
 
 ]

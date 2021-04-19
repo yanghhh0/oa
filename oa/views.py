@@ -9,7 +9,8 @@ import qrcode
 import time
 
 from oa.api import is_login, check_cookie, check_login, model_to_dict, check_stu_login, \
-    check_stu_login_cookie, url_change, search_items, student_check, get_check_record_table
+    check_stu_login_cookie, url_change, search_items, student_check, get_check_record_table, \
+    items_to_table, update_item
 from django.views.decorators.clickjacking import xframe_options_sameorigin
 
 HOST = '127.0.0.1?'
@@ -70,7 +71,7 @@ def notice(request):
 
 @xframe_options_sameorigin
 def manage(request):
-    return render(request, 'manage.html')
+    return render(request, 'add_item.html')
 
 
 @xframe_options_sameorigin
@@ -182,5 +183,55 @@ def get_record_table(request):
     res = json.dumps(res)
     return HttpResponse(res)
 
+
+def add_item(request):
+    flag, rank = check_cookie(request)
+    if not flag:
+        return render(request, 'login.html', {'error_msg': ''})
+    uid = model_to_dict(rank).get('uid')
+    if request.POST:
+        print(request.POST)
+        update_item(uid, request.POST.get('name'), 0)
+    return render(request, 'search_item.html')
+
+
+def get_items(request):
+    flag, rank = check_cookie(request)
+    if not flag:
+        return render(request, 'login.html', {'error_msg': ''})
+    uid = model_to_dict(rank).get('uid')
+    items = search_items(uid)
+    items = items_to_table(items)
+    for item in items:
+        item['stu'] = len(item['stu'])
+    res = {"code": 0, "msg": "", "count": len(items), "data": items}
+    res = json.dumps(res)
+    return HttpResponse(res)
+
+
+@xframe_options_sameorigin
+def search_item(request):
+    return render(request, 'search_item.html')
+
+
+def change_stu_item(request):
+    flag, rank = check_cookie(request)
+    if not flag:
+        return render(request, 'login.html', {'error_msg': ''})
+    uid = model_to_dict(rank).get('uid')
+    if request.POST:
+        print(1)
+        # update_item(uid, request.POST.get('name'), 2, uid=request.POST.get('uid'))
+    return render(request, 'search_item.html')
+
+
+def del_item(request):
+    flag, rank = check_cookie(request)
+    if not flag:
+        return render(request, 'login.html', {'error_msg': ''})
+    uid = model_to_dict(rank).get('uid')
+    if request.POST:
+        update_item(uid, request.POST.get('name'), 1, request.POST.get('uid'))
+    return render(request, 'search_item.html')
 
 

@@ -38,7 +38,7 @@ class Teacher(models.Model):
 
 class Student(models.Model):
     # 学生信息表 字段：学号，密码，姓名，学院，专业，班级
-    uid = models.CharField(max_length=16, primary_key=True)
+    uid = models.IntegerField(primary_key=True)
     password = models.CharField(max_length=64)
     name = models.CharField(max_length=16)
     institute = models.CharField(max_length=32)
@@ -57,7 +57,6 @@ class Item(models.Model):
     uid = models.AutoField(null=False, primary_key=True)
     name = models.CharField(max_length=15)
     t_uid = models.IntegerField(null=False)
-    info = models.JSONField()  # json形式表示额外数据
 
     class Meta:
         db_table = 'item'
@@ -91,7 +90,7 @@ class CheckRecord(models.Model):
 
 class StuItem(models.Model):
     # 名单详细
-    item_id = models.IntegerField(null=False)
+    item_id = models.IntegerField(primary_key=True, null=False)
     stu_id = models.IntegerField(null=False)
 
     class Meta:

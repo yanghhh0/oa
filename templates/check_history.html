@@ -11,7 +11,8 @@
 
 <script src="/static/layui.js"></script>
 <script>
-layui.use('table', function(){
+layui.use('table', renderTable());
+function renderTable(){
   var table = layui.table;
 
   //第一个实例
@@ -22,15 +23,14 @@ layui.use('table', function(){
     ,page: true //开启分页
     ,cols: [[ //表头
       {field: 'check_id', title: 'ID', width:80, sort: true, fixed: 'left'}
-      ,{field: 'check_item', title: '名单', width: 80}
+      ,{field: 'check_item', title: '名单', width: 180}
       ,{field: 'check_time', title: '日期时间', width:180}
-      ,{field: 'checked_count', title: '签到人数', width:120, sort: true}
+      ,{field: 'checked_count', title: '签到人数', width:120}
       ,{field: 'total_count', title: '名单人数', width:120}
-      ,{field: 'unchecked_stu', title: '未签到人', width: 200, sort: true}
+      ,{field: 'unchecked_stu', title: '未签到人', width: 200}
     ]]
   });
-
-});
+}
 </script>
 </body>
 </html>
