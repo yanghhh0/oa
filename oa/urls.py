@@ -23,10 +23,7 @@ urlpatterns = [
     path(r'logout/', views.logout, name='logout'),
     path(r'register/', views.register, name='register'),
     path(r'teacher/', views.teacher, name='teacher'),
-    path(r'data/', views.data, name='data'),
     path(r'check/', views.check, name='check'),
-    path(r'manage/', views.manage, name='manage'),
-    path(r'notice/', views.notice, name='notice'),
     path(r'qrcode/', views.make_qrcode, name='qrcode'),
     path(r'stuLogin/', views.stu_login, name='stuLogin'),
     path(r'stuIndex/', views.stu_index, name='stuIndex'),
@@ -38,5 +35,8 @@ urlpatterns = [
     path(r'searchItem/addItem/', views.add_item, name='addItem'),
     # path(r'searchItem/changeItem/', views.add_item, name='changeItem'),
     path(r'searchItem/delItem/', views.del_item, name='delItem'),
+    path(r'searchItem/searchStu/', views.search_stu, name='searchStu'),
+    path(r'searchItem/addStu/', views.add_stu, name='addStu'),
+    path(r'searchItem/getStuItem/', views.get_stu_item, name='getStuItem'),
 
 ]

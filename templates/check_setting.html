@@ -15,18 +15,13 @@
         <div class="layui-input-block">
             <select name="class_list" lay-filter="class_list" style="display: block;">
                 {% for cls in class_list %}
-                    <option value={{ cls }}>{{ cls }}</option>
+                    <option value={{ cls.uid }}>{{ cls.name }}</option>
                 {% endfor %}
             </select>
         </div>
     </div>
 
-    <div class="layui-form-item">
-        <label class="layui-form-label">持续时间</label>
-        <div class="layui-input-block">
-          <input type="text" name="during_time" lay-verify="title" autocomplete="off" placeholder="秒" class="layui-input" style="width: auto">
-        </div>
-    </div>
+
 
     <div class="layui-form-item">
         <div class="layui-input-block">

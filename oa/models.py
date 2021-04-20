@@ -38,7 +38,7 @@ class Teacher(models.Model):
 
 class Student(models.Model):
     # 学生信息表 字段：学号，密码，姓名，学院，专业，班级
-    uid = models.IntegerField(primary_key=True)
+    uid = models.BigIntegerField(primary_key=True)
     password = models.CharField(max_length=64)
     name = models.CharField(max_length=16)
     institute = models.CharField(max_length=32)
@@ -54,9 +54,9 @@ class Student(models.Model):
 
 class Item(models.Model):
     # 课程信息表 字段:课程编号，课程名称，教师编号，课程其余信息
-    uid = models.AutoField(null=False, primary_key=True)
+    uid = models.BigAutoField(null=False, primary_key=True)
     name = models.CharField(max_length=15)
-    t_uid = models.IntegerField(null=False)
+    t_uid = models.BigIntegerField(null=False)
 
     class Meta:
         db_table = 'item'
@@ -67,12 +67,12 @@ class Item(models.Model):
 
 class CheckInfo(models.Model):
     # 某次签到的信息
-    check_id = models.AutoField(null=False, primary_key=True)
-    t_uid = models.IntegerField(null=False)
-    check_time = models.IntegerField(null=False)
+    check_id = models.BigAutoField(null=False, primary_key=True)
+    t_uid = models.BigIntegerField(null=False)
+    check_time = models.BigIntegerField(null=False)
     checked_count = models.IntegerField(null=False)
     total_count = models.IntegerField(null=False)
-    item_id = models.IntegerField(null=False)
+    item_id = models.BigIntegerField(null=False)
 
     class Meta:
         db_table = 'check_info'
@@ -80,21 +80,24 @@ class CheckInfo(models.Model):
 
 class CheckRecord(models.Model):
     # 签到记录
-    check_id = models.IntegerField(null=False)  # 签到id
-    uid = models.IntegerField(null=False)  # 签到人id
-    check_time = models.IntegerField(null=False)  # 签到时间
+    id = models.BigAutoField(primary_key=True, null=False)
+    check_id = models.BigIntegerField(null=False)  # 签到id
+    uid = models.BigIntegerField(null=False)  # 签到人id
+    check_time = models.BigIntegerField(null=False)  # 签到时间
 
     class Meta:
         db_table = 'check_record'
+        unique_together = ('check_id', 'uid')
 
 
 class StuItem(models.Model):
     # 名单详细
-    item_id = models.IntegerField(primary_key=True, null=False)
-    stu_id = models.IntegerField(null=False)
+    id = models.BigAutoField(primary_key=True, null=False)
+    item_id = models.BigIntegerField(null=False)
+    stu_id = models.BigIntegerField(null=False)
 
     class Meta:
         db_table = 'stu_item'
-
+        unique_together = ('item_id', 'stu_id')
 
 

@@ -10,10 +10,8 @@ import time
 
 from oa.api import is_login, check_cookie, check_login, model_to_dict, check_stu_login, \
     check_stu_login_cookie, url_change, search_items, student_check, get_check_record_table, \
-    items_to_table, update_item
+    items_to_table, update_item, search_stu_item, add_stu_to_item, generate_check_info
 from django.views.decorators.clickjacking import xframe_options_sameorigin
-
-HOST = '127.0.0.1?'
 
 
 @csrf_exempt
@@ -65,26 +63,20 @@ def teacher(request):
 
 
 @xframe_options_sameorigin
-def notice(request):
-    return render(request, 'notice.html')
-
-
-@xframe_options_sameorigin
-def manage(request):
-    return render(request, 'add_item.html')
-
-
-@xframe_options_sameorigin
-def data(request):
-    return render(request, 'data.html')
-
-
-@xframe_options_sameorigin
 def check(request):
+    flag, rank = check_cookie(request)
+    if not flag:
+        return render(request, 'login.html', {'error_msg': ''})
+    uid = model_to_dict(rank).get('uid')
     keys = request.GET.keys()
     dt = dict()
     for key in keys:
         dt[key] = request.GET[key]
+    print(dt)
+    dt['uid'] = uid
+    dt['time'] = round(time.time())
+    # 生成签到记录
+    dt['check_id'] = generate_check_info(t_uid=uid, check_time=dt['time'], item_id=dt['class_list'])
     print(dt)
     return render(request, 'check.html', dt)
 
@@ -100,7 +92,7 @@ def make_qrcode(request):
     print(request)
     print(111)
     dt = request.GET.dict()
-    url = f"http://192.168.36.143:8000/stu_index/"
+    url = f"http://192.168.163.143:8000/stuIndex/?"
     url = url_change(url, dt)
     print(f'qrcode:{url}')
     qr = qrcode.QRCode(box_size=10, border=2)
@@ -141,17 +133,19 @@ def stu_login(request):
 
 
 def stu_index(request):
-    # 如果当前时间和二维码的时间差距超过20s就当过期处理
+    # 如果当前时间和二维码的时间差距超过15s就当过期处理
     flag, rank = check_stu_login_cookie(request)
     if not flag:
         return render(request, 'stu_login.html')
+    print(request)
     rank = model_to_dict(rank)
-    check_time = request.GET['time']
+    check_time = int(request.GET.get('time'))
     t = time.time()
     t = int(round(t * 1000))
-    if check_time - t > 15 * 1000:
+    print(f't:{t}, check_time:{check_time}')
+    if t - check_time > 15 * 1000:
         return render(request, 'stu_index.html', {'res_msg': '二维码已过期'})
-    res = student_check(rank['uid'], request.GET['cls_id'], request.GET['check_id'])
+    res = student_check(rank['uid'], request.GET.get('cls_id'), request.GET.get('check_id'))
     return render(request, 'stu_index.html', {'res_msg': res})
 
 
@@ -160,7 +154,7 @@ def check_setting(request):
     dt = dict()
     print(request.GET)
     items = search_items(request.GET['uid'])
-    dt['class_list'] = [item['name'] for item in items]
+    dt['class_list'] = items
     print(dt)
     return render(request, 'check_setting.html', dt)
 
@@ -175,11 +169,11 @@ def get_record_table(request):
     if not flag:
         return render(request, 'login.html', {'error_msg': ''})
     uid = model_to_dict(rank).get('uid')
-    table = get_check_record_table(uid)
-    test_data = {"check_id": 1, "check_item": "计算机171", "check_time": "2021/4/17/15:30", "checked_count": 20,
-                 "total_count": 21, "unchecked_stu": ['石头人']}
-    table.append(test_data)
-    res = {"code": 0, "msg": "", "count": len(table), "data": table}
+    total, table = get_check_record_table(uid, page=int(request.GET.get('page'))-1, limit=int(request.GET.get('limit')))
+    # test_data = {"check_id": 1, "check_item": "计算机171", "check_time": "2021/4/17/15:30", "checked_count": 20,
+    #              "total_count": 21, "unchecked_stu": ['石头人']}
+    # table.append(test_data)
+    res = {"code": 0, "msg": "", "count": total, "data": table}
     res = json.dumps(res)
     return HttpResponse(res)
 
@@ -202,8 +196,6 @@ def get_items(request):
     uid = model_to_dict(rank).get('uid')
     items = search_items(uid)
     items = items_to_table(items)
-    for item in items:
-        item['stu'] = len(item['stu'])
     res = {"code": 0, "msg": "", "count": len(items), "data": items}
     res = json.dumps(res)
     return HttpResponse(res)
@@ -234,4 +226,37 @@ def del_item(request):
         update_item(uid, request.POST.get('name'), 1, request.POST.get('uid'))
     return render(request, 'search_item.html')
 
+
+@xframe_options_sameorigin
+def add_stu(request):
+    flag, rank = check_cookie(request)
+    if not flag:
+        return render(request, 'login.html', {'error_msg': ''})
+    dt = dict()
+
+    if request.POST:
+        dt['itemId'] = request.GET.get('itemId')
+        print(request.POST)
+        add_stu_to_item(dt['itemId'], request.POST.get('uid'))
+    return render(request, 'add_stu.html', dt)
+
+
+@xframe_options_sameorigin
+def search_stu(request):
+    flag, rank = check_cookie(request)
+    if not flag:
+        return render(request, 'login.html', {'error_msg': ''})
+    dt = dict()
+    dt['itemId'] = request.GET.get('itemId')
+    return render(request, 'add_stu.html', dt)
+
+
+def get_stu_item(request):
+    flag, rank = check_cookie(request)
+    if not flag:
+        return render(request, 'login.html', {'error_msg': ''})
+    dt = search_stu_item(request.GET.get('itemId'))
+    res = {"code": 0, "msg": "", "count": len(dt), "data": dt}
+    res = json.dumps(res)
+    return HttpResponse(res)
 

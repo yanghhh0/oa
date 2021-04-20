@@ -40,6 +40,7 @@ def is_login(func):
             return func(request, *args, **kwargs)
         else:
             return render(request, 'login.html', {'error_msg': ''})
+
     return inner
 
 
@@ -101,6 +102,7 @@ def url_change(url, params):
 # @result check_time 时间戳
 # @return res  签到信息成功，重复，不在名单等
 def student_check(stu_id, cls_id, check_id):
+    print(f'stu_id:{stu_id}, cls_id:{cls_id}, check_id:{check_id}')
     # 检查是否在名单内
     if not stu_in_cls(stu_id, cls_id):
         result_info = '抱歉，不在本次签到名单中'
@@ -109,9 +111,9 @@ def student_check(stu_id, cls_id, check_id):
         result_info = '您已签到过，请勿重复签到'
     # 增加一条签到记录，修改签到信息中已签到的人数
     else:
-        CheckRecord.objects.create(check_id=check_id, uid=stu_id, check_time=int(round(time.time()*1000)))
+        CheckRecord.objects.create(check_id=check_id, uid=stu_id, check_time=int(round(time.time())))
         count = int(CheckInfo.objects.get(check_id=check_id).checked_count)
-        CheckInfo.objects.update_or_create(check_id=check_id, checked_count=count+1)
+        CheckInfo.objects.filter(check_id=check_id).update(checked_count=count + 1)
         result_info = '签到成功'
     return result_info
 
@@ -125,7 +127,7 @@ def stu_in_cls(stu_id, cls_id):
 
 # 检查是否签到过
 def is_checked(stu_id, check_id):
-    if len(CheckRecord.objects.filter(stu_id=stu_id, check_id=check_id)):
+    if len(CheckRecord.objects.filter(uid=stu_id, check_id=check_id)):
         return True
     return False
 
@@ -141,32 +143,35 @@ def search_items(t_uid):
     return item_dict
 
 
-def get_check_record_table(uid):
+def get_check_record_table(uid, page, limit):
     # @params uid 教师id
-    # @return record_id 签到记录id
-    # @return total 签到人数
-    # @return count 实际签到人数
-    # @return date  签到时间
+    # @return check_id 签到记录id
+    # @return total_count 签到人数
+    # @return checked_count 实际签到人数
+    # @return check_time  签到时间
     # @return item  签到名单
     # @return unchecked_name_list 未签到人名字
     # 获取uid所有check_info
-    res = get_all_check_info(uid)
+    total, res = get_all_check_info(uid, page, limit)
     # 将item_id转为名单名称
     res = item_id_to_name(res)
     # 未签到的人 = item的人 - check_record找check_id签到的人
     res = find_unchecked_name_list(res)
-    return res
+    return total, res
 
 
 # 获取uid所有check_info
-def get_all_check_info(uid):
+def get_all_check_info(uid, page=-1, limit=-1):
     info_array = CheckInfo.objects.filter(t_uid=uid)
+    total = len(info_array)
+    if page != -1:
+        info_array = CheckInfo.objects.filter(t_uid=uid)[page*limit:page*limit+limit]
     res = []
     for info in info_array:
         res.append(model_to_dict(info))
     if len(res):
         print(f"res[0]：{res[0]}")
-    return res
+    return total, res
 
 
 # 将item_id转为名单名称
@@ -198,10 +203,7 @@ def find_unchecked_name_list(objs):
 # 处理名单显示
 def items_to_table(items):
     for item in items:
-        item['stu'] = []
-        stu_objects = StuItem.objects.filter(item_id=item['uid'])
-        for stu in stu_objects:
-            item['stu'].append(Student.objects.get(uid=stu.stu_id).name)
+        item['stu'] = StuItem.objects.filter(item_id=item['uid']).count()
     return items
 
 
@@ -216,3 +218,30 @@ def update_item(t_uid, name, op, uid=-1):
     else:
         return
 
+
+def search_stu_item(item_id):
+    stu_ids = StuItem.objects.filter(item_id=item_id)
+    stus = []
+    for stu_item in stu_ids:
+        obj = dict()
+        obj['uid'] = stu_item.stu_id
+        obj['name'] = Student.objects.get(uid=int(stu_item.stu_id)).name
+        stus.append(obj)
+    return stus
+
+
+def add_stu_to_item(item_id, stu_id):
+    StuItem.objects.create(item_id=item_id, stu_id=stu_id)
+
+
+# 生成签到记录
+# @params t_uid 教师id
+# @params check_time 发起时间
+# @params item_id 名单id
+# @return check_id 签到的id
+
+def generate_check_info(t_uid, check_time, item_id):
+    print(f't_uid:{t_uid}, check_time:{check_time}, item_id:{item_id}')
+    obj = CheckInfo.objects.create(t_uid=t_uid, check_time=check_time, item_id=item_id,
+                                   checked_count=0, total_count=int(StuItem.objects.filter(item_id=item_id).count()))
+    return obj.check_id

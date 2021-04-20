@@ -18,12 +18,12 @@ function renderTable(){
   //第一个实例
   table.render({
     elem: '#dataTable'
-    ,height: 312
+    ,limit: 10
     ,url: '/getCheckTable/' //数据接口
     ,page: true //开启分页
     ,cols: [[ //表头
       {field: 'check_id', title: 'ID', width:80, sort: true, fixed: 'left'}
-      ,{field: 'check_item', title: '名单', width: 180}
+      ,{field: 'item_name', title: '名单', width: 180}
       ,{field: 'check_time', title: '日期时间', width:180}
       ,{field: 'checked_count', title: '签到人数', width:120}
       ,{field: 'total_count', title: '名单人数', width:120}

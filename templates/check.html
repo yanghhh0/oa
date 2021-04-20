@@ -21,11 +21,12 @@
 <script type="text/javascript">
     let kk=0;
     let cls="{{ class_list }}";
-    let drt={{ during_time }};
+    let item="{{ check_id }}";
+    let uid="{{ uid }}";
     function getQRCode(){
         setTimeout(getQRCode, 5000)
         $('#qrcode').removeAttr("src");
-        $('#qrcode').attr('src', `/qrcode/?class_list=${cls}&during_time=${drt}&time=${new Date().getTime()}`);
+        $('#qrcode').attr('src', `/qrcode/?cls_id=${cls}&time=${new Date().getTime()}&check_id=${item}&t_uid=${uid}`);
         document.getElementById('info').innerText = kk.toString();
         kk++;
 

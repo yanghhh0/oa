@@ -12,21 +12,24 @@
 </div>
 <script type="text/html" id="toolbarDemo">
   <div class="layui-btn-container">
-    <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
-    <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
-    <button class="layui-btn layui-btn-sm" lay-event="addItem">增加名单</button>
+    <button class="layui-btn layui-btn-sm" lay-event="addItem">增加学生</button>
   </div>
 </script>
 
 <script type="text/html" id="barDemo">
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
-    <a class="layui-btn layui-btn-xs" lay-event="detail">详情</a>
 </script>
 
 <script type="text/html" id="formAdd">
-  <form class="layui-form" action="/searchItem/addItem/" method="post" >
-      <div class="layui-form-item">
-          <label class="layui-form-label">名单名称</label>
+  <form id='addStu' class="layui-form" action="/searchItem/addStu/?itemId={{ itemId }}" method="post" >
+      <div class="layui-form-item" style="width: 200px">
+          <label class="layui-form-label">学号</label>
+          <div class="layui-input-block">
+              <input type="text" name="uid" required  lay-verify="required" autocomplete="off" class="layui-input">
+          </div>
+      </div>
+      <div class="layui-form-item" style="width: 200px">
+          <label class="layui-form-label">姓名</label>
           <div class="layui-input-block">
               <input type="text" name="name" required  lay-verify="required" autocomplete="off" class="layui-input">
           </div>
@@ -44,20 +47,20 @@
 
 <script src="/static/layui.js"></script>
 <script>
+
 layui.use('table', function(){
   var table = layui.table;
-
+  var itemId = {{ itemId }};
   table.render({
     elem: '#test'
-    ,url:'/getItems/'
+    ,url:'/searchItem/getStuItem/?itemId='+itemId
     ,toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
     ,defaultToolbar: ['filter', 'exports', 'print']
     ,title: '用户数据表'
     ,cols: [[
       {type: 'checkbox', fixed: 'left'}
-      ,{field:'uid', title:'ID', width:80, fixed: 'left', unresize: true, sort: true}
-      ,{field:'name', title:'名单', width:120, edit: 'text'}
-      ,{field:'stu', title:'学生', width: 80}
+      ,{field:'uid', title:'学号', width:200, fixed: 'left', unresize: true, sort: true}
+      ,{field:'name', title:'姓名', width:120, edit: 'text'}
       ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:150}
     ]]
     ,page: true
@@ -67,26 +70,17 @@ layui.use('table', function(){
   table.on('toolbar(test)', function(obj){
     var checkStatus = table.checkStatus(obj.config.id);
     switch(obj.event){
-        case 'getCheckData':
-            var data = checkStatus.data;
-            layer.alert(JSON.stringify(data));
-            break;
-        case 'getCheckLength':
-            var data = checkStatus.data;
-            layer.msg('选中了：'+ data.length + ' 个');
-            break;
-
         case 'addItem':
+
             layer.open({
                 type: 1,
-                title: '增加名单',
+                title: '增加学生',
                 content: $('#formAdd').html(),
                 yes: function(index, layero){
                     //do something
                     layer.close(index); //如果设定了yes回调，需进行手工关闭
                 }
             });
-          {#layer.alert('111');#}
           break;
     }
   });
