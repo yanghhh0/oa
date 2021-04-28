@@ -7,10 +7,11 @@ from django.views.decorators.csrf import csrf_exempt
 import requests
 import qrcode
 import time
+import hashlib
 
 from oa.api import is_login, check_cookie, check_login, model_to_dict, check_stu_login, \
     check_stu_login_cookie, url_change, search_items, student_check, get_check_record_table, \
-    items_to_table, update_item, search_stu_item, add_stu_to_item, generate_check_info
+    items_to_table, update_item, search_stu_item, add_stu_to_item, generate_check_info, get_check_info_api
 from django.views.decorators.clickjacking import xframe_options_sameorigin
 
 
@@ -22,7 +23,10 @@ def login(request):
         print(info)
         dt['email'] = info.get('email')
         dt['password'] = info.get('password')
-        # TODO：password 加密
+        m = hashlib.sha1()
+        m.update(dt['password'].encode(encoding="utf-8"))
+        m.hexdigest()
+        dt['password'] = m.hexdigest()
         if check_login(dt['email'], dt['password']) == 0:
             # return render(request, 'teacher.html', dt)
             response = redirect('/teacher/')
@@ -77,8 +81,19 @@ def check(request):
     dt['time'] = round(time.time())
     # 生成签到记录
     dt['check_id'] = generate_check_info(t_uid=uid, check_time=dt['time'], item_id=dt['class_list'])
+    if not dt.get('N'):
+        dt['N'] = 181.0
+    if not dt.get('E'):
+        dt['E'] = 181.0
     print(dt)
     return render(request, 'check.html', dt)
+
+
+def get_check_info(request):
+    check_id = request.GET.get('check_id')
+    res = get_check_info_api(check_id)
+    res = json.dumps(res)
+    return HttpResponse(res)
 
 
 def logout(request):
@@ -92,7 +107,7 @@ def make_qrcode(request):
     print(request)
     print(111)
     dt = request.GET.dict()
-    url = f"http://192.168.163.143:8000/stuIndex/?"
+    url = f"http://192.168.100.143:8000/stuIndex/?"
     url = url_change(url, dt)
     print(f'qrcode:{url}')
     qr = qrcode.QRCode(box_size=10, border=2)
@@ -138,6 +153,8 @@ def stu_index(request):
     if not flag:
         return render(request, 'stu_login.html')
     print(request)
+    if not request.GET.get('time'):
+        return render(request, 'stu_index.html')
     rank = model_to_dict(rank)
     check_time = int(request.GET.get('time'))
     t = time.time()
@@ -259,4 +276,13 @@ def get_stu_item(request):
     res = {"code": 0, "msg": "", "count": len(dt), "data": dt}
     res = json.dumps(res)
     return HttpResponse(res)
+
+
+def test(request):
+    return render(request, 'test.html')
+
+
+@xframe_options_sameorigin
+def index(request):
+    return render(request, 'index.html')
 

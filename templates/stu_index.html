@@ -8,5 +8,29 @@
 <div style="vertical-align: middle;text-align: center">
     {{ res_msg }}
 </div>
+<script>
+     window.navigator.geolocation.getCurrentPosition(
+            function (position) {
+                var longitude = position.coords.longitude;
+                var latitude = position.coords.latitude;
+                alert(longitude);
+                alert(latitude);
+            },
+            function onError(error) {
+                //alert(error.message);
+                switch (error.code) {
+                    case error.PERMISSION_DENIED:
+                        alert("您拒绝对获取地理位置的请求");
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        alert("位置信息是不可用的");
+                        break;
+                    case error.TIMEOUT:
+                        alert("请求您的地理位置超时");
+                        break;
+                }
+            }
+        );
+</script>
 </body>
 </html>

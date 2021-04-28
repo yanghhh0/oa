@@ -24,6 +24,8 @@ urlpatterns = [
     path(r'register/', views.register, name='register'),
     path(r'teacher/', views.teacher, name='teacher'),
     path(r'check/', views.check, name='check'),
+    path(r'check/getCheckInfo/', views.get_check_info, name='getCheckInfo'),
+
     path(r'qrcode/', views.make_qrcode, name='qrcode'),
     path(r'stuLogin/', views.stu_login, name='stuLogin'),
     path(r'stuIndex/', views.stu_index, name='stuIndex'),
@@ -38,5 +40,7 @@ urlpatterns = [
     path(r'searchItem/searchStu/', views.search_stu, name='searchStu'),
     path(r'searchItem/addStu/', views.add_stu, name='addStu'),
     path(r'searchItem/getStuItem/', views.get_stu_item, name='getStuItem'),
+    path(r'test/', views.test, name='test'),
+    path(r'index/', views.index, name='index'),
 
 ]

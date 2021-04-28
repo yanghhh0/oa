@@ -9,13 +9,16 @@
 </head>
 <body bgcolor="aqua">
 <div class="row">
-    <p>{{ dt }}</p>
     <div class="vertical-align-middle" id="showQRCode" align="center">
         <img id="qrcode" width="420" height="420">
-        <span id="info"></span>
     </div>
-    <button onclick="getQRCode()">开始</button>
-    <span id="info"></span>
+{#    <button onclick="getQRCode()">开始</button>#}
+{#    <span id="info"></span>#}
+</div>
+<div class="row">
+    <div class="vertical-align-middle" id="showInfo" align="center">
+        <p id="info"></p>
+    </div>
 </div>
 </body>
 <script type="text/javascript">
@@ -23,14 +26,35 @@
     let cls="{{ class_list }}";
     let item="{{ check_id }}";
     let uid="{{ uid }}";
+    let N="{{ N }}";
+    let E="{{ E }}";
+    showInfo();
+    getQRCode();
+
     function getQRCode(){
-        setTimeout(getQRCode, 5000)
+        setTimeout(getQRCode, 5000);
         $('#qrcode').removeAttr("src");
-        $('#qrcode').attr('src', `/qrcode/?cls_id=${cls}&time=${new Date().getTime()}&check_id=${item}&t_uid=${uid}`);
-        document.getElementById('info').innerText = kk.toString();
-        kk++;
+        $('#qrcode').attr('src', `/qrcode/?cls_id=${cls}&time=${new Date().getTime()}&check_id=${item}&t_uid=${uid}&N=${N}&E=${E}`);
+        {#document.getElementById('info').innerText = kk.toString();#}
+        {#kk++;#}
 
     }
+    function showInfo(){
+        setTimeout(showInfo, 1000);
+        var httpRequest = new XMLHttpRequest();
+        httpRequest.open('get', `/check/getCheckInfo/?cls_id=${cls}&time=${new Date().getTime()}&check_id=${item}&t_uid=${uid}`, true);
+        httpRequest.send();
+        httpRequest.onreadystatechange = function (){
+            if(httpRequest.readyState === 4 && httpRequest.status === 200){
+                var json = httpRequest.responseText;
+                var obj = JSON.parse(json);
+                document.getElementById('info').innerText="已签到: "+obj.checked_count+"/总人数: "+obj.total;
+            }
+        };
+    }
+
+</script>
+<script>
 
 </script>
 

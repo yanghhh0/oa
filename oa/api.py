@@ -101,7 +101,7 @@ def url_change(url, params):
 # @result record_id 学生签到记录
 # @result check_time 时间戳
 # @return res  签到信息成功，重复，不在名单等
-def student_check(stu_id, cls_id, check_id):
+def student_check(stu_id, cls_id, check_id, check_type=1, check_reason=""):
     print(f'stu_id:{stu_id}, cls_id:{cls_id}, check_id:{check_id}')
     # 检查是否在名单内
     if not stu_in_cls(stu_id, cls_id):
@@ -111,7 +111,8 @@ def student_check(stu_id, cls_id, check_id):
         result_info = '您已签到过，请勿重复签到'
     # 增加一条签到记录，修改签到信息中已签到的人数
     else:
-        CheckRecord.objects.create(check_id=check_id, uid=stu_id, check_time=int(round(time.time())))
+        CheckRecord.objects.create(check_id=check_id, uid=stu_id, check_time=int(round(time.time())),
+                                   check_type=check_type, check_reason=check_reason)
         count = int(CheckInfo.objects.get(check_id=check_id).checked_count)
         CheckInfo.objects.filter(check_id=check_id).update(checked_count=count + 1)
         result_info = '签到成功'
@@ -245,3 +246,12 @@ def generate_check_info(t_uid, check_time, item_id):
     obj = CheckInfo.objects.create(t_uid=t_uid, check_time=check_time, item_id=item_id,
                                    checked_count=0, total_count=int(StuItem.objects.filter(item_id=item_id).count()))
     return obj.check_id
+
+
+def get_check_info_api(check_id):
+    r = CheckInfo.objects.get(check_id=check_id)
+    res = dict()
+    res['checked_count'] = r.checked_count
+    res['total'] = r.total_count
+    print(res)
+    return res
