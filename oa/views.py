@@ -105,9 +105,11 @@ def logout(request):
 
 def make_qrcode(request):
     print(request)
-    print(111)
     dt = request.GET.dict()
-    url = f"http://192.168.100.143:8000/stuIndex/?"
+    if dt.get('api'):
+        url = f"http://192.168.13.143:8000/{dt.get('api')}/?"
+    else:
+        url = f"http://192.168.13.143:8000/stuIndex/?"
     url = url_change(url, dt)
     print(f'qrcode:{url}')
     qr = qrcode.QRCode(box_size=10, border=2)
@@ -154,7 +156,7 @@ def stu_index(request):
         return render(request, 'stu_login.html')
     print(request)
     if not request.GET.get('time'):
-        return render(request, 'stu_index.html')
+        return render(request, 'stu_index.html', {'res_msg': '登录后请重新扫描二维码'})
     rank = model_to_dict(rank)
     check_time = int(request.GET.get('time'))
     t = time.time()
@@ -187,6 +189,9 @@ def get_record_table(request):
         return render(request, 'login.html', {'error_msg': ''})
     uid = model_to_dict(rank).get('uid')
     total, table = get_check_record_table(uid, page=int(request.GET.get('page'))-1, limit=int(request.GET.get('limit')))
+    for obj in table:
+        obj['check_time'] = time.strftime("%Y年%m月%d日 %H：%M：%S", time.localtime(obj['check_time']))
+
     # test_data = {"check_id": 1, "check_item": "计算机171", "check_time": "2021/4/17/15:30", "checked_count": 20,
     #              "total_count": 21, "unchecked_stu": ['石头人']}
     # table.append(test_data)
@@ -195,6 +200,7 @@ def get_record_table(request):
     return HttpResponse(res)
 
 
+@xframe_options_sameorigin
 def add_item(request):
     flag, rank = check_cookie(request)
     if not flag:
@@ -286,3 +292,51 @@ def test(request):
 def index(request):
     return render(request, 'index.html')
 
+
+@xframe_options_sameorigin
+def recheck(request):
+    flag, rank = check_cookie(request)
+    if not flag:
+        return render(request, 'login.html', {'error_msg': ''})
+    dt = dict()
+    dt['check_id'] = request.GET.get('check_id')
+    return render(request, 'recheck.html', dt)
+
+
+def stu_recheck(request):
+    if request.POST:
+        print(request.POST)
+        print(request.GET)
+        print(request)
+        check_id = request.GET.get('check_id')
+        cls_id = get_check_info_api(check_id).get('item_id')
+        res_msg = student_check(request.POST.get('stu_id'), cls_id,
+                                check_id, check_type=2,
+                                check_reason=request.POST.get('recheck_reason'))
+        return render(request, 'stu_index.html', {"res_msg": res_msg})
+
+    dt = dict()
+    dt['cls_id'] = request.GET.get('cls_id')
+    dt['check_id'] = request.GET.get('check_id')
+    return render(request, 'stu_recheck.html', dt)
+
+
+# ----------------------------------------meeting_check--------------------------------------
+@xframe_options_sameorigin
+def meeting_check(request):
+    return render(request, 'meeting_check.html')
+
+
+def make_mc_qrcode(request):
+    dt = request.POST.dict()
+    url = f"http://192.168.13.143:8000/meetingCheckIn/?"
+    url = url_change(url, dt)
+    qr = qrcode.QRCode(box_size=12, border=2)
+    qr.add_data(url)
+    qr.make(fit=True)
+    img = qr.make_image()
+    buf = BytesIO()
+    img.save(buf)
+    img_stream = buf.getvalue()
+    return HttpResponse(img_stream, content_type="image/jpg")
+# ----------------------------------------meeting_check--------------------------------------

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>补签</title>
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/jquery.qrcode.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+</head>
+<body bgcolor="aqua">
+<div class="row">
+    <div class="vertical-align-middle" id="showQRCode" align="center">
+        <img id="qrcode" width="420" height="420">
+    </div>
+    <h2 align="center">请扫码完成补签</h2>
+{#    <button onclick="getQRCode()">开始</button>#}
+{#    <span id="info"></span>#}
+</div>
+</body>
+<script type="text/javascript">
+    let check_id = {{ check_id }};
+    const api = "stuRecheck"
+    getQRCode();
+
+    function getQRCode(){
+        $('#qrcode').removeAttr("src");
+        $('#qrcode').attr('src', `/qrcode/?check_id=${check_id}&api=${api}`);
+        {#document.getElementById('info').innerText = kk.toString();#}
+        {#kk++;#}
+
+    }
+
+</script>
+<script>
+
+</script>
+
+</html>

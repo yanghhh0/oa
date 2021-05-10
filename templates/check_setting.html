@@ -13,21 +13,27 @@
     <div class="layui-form-item">
         <label class="layui-form-label">名单选择</label>
         <div class="layui-input-block">
-            <select name="class_list" lay-filter="class_list" style="display: block;">
+            <select name="class_list" lay-filter="class_list" >
                 {% for cls in class_list %}
                     <option value={{ cls.uid }}>{{ cls.name }}</option>
                 {% endfor %}
             </select>
         </div>
     </div>
-    
+    <div class="layui-form-item">
+        <label class="layui-form-label">定位</label>
+        <div class="layui-input-block">
+            <input type="checkbox" name="switch" lay-skin="switch">
+        </div>
+    </div>
 
 
     <div class="layui-form-item">
         <div class="layui-input-block">
-          <button type="submit" class="layui-btn" lay-submit="" lay-filter="go_check">立即提交</button>
+          <button type="submit" class="layui-btn" lay-submit="" lay-filter="go_check">发起签到</button>
         </div>
     </div>
 </form>
+<script src="/static/layui.js"></script>
 </body>
 </html>

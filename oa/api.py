@@ -253,5 +253,6 @@ def get_check_info_api(check_id):
     res = dict()
     res['checked_count'] = r.checked_count
     res['total'] = r.total_count
+    res['item_id'] = r.item_id
     print(res)
     return res

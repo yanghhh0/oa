@@ -42,5 +42,8 @@ urlpatterns = [
     path(r'searchItem/getStuItem/', views.get_stu_item, name='getStuItem'),
     path(r'test/', views.test, name='test'),
     path(r'index/', views.index, name='index'),
+    path(r'recheck/', views.recheck, name='recheck'),
+    path(r'stuRecheck/', views.stu_recheck, name='stu_recheck'),
+    path(r'meetingCheck/', views.meeting_check, name='meeting_check'),
 
 ]
