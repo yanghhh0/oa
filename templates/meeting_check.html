@@ -2,8 +2,31 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>会议式签到</title>
+    <title>签到</title>
+    <link rel="stylesheet" href="/static/css/layui.css" media="all">
+
 </head>
 <body>
+<div style="text-align: center;vertical-align: center">
+    <form class="layui-form" action="" type="post" lay-filter="formSubmit" method="post">
+        {% for obj in item %}
+            <div class="layui-form-item" style="width: 400px;margin-top: 50px;margin-left: 300px;">
+                <label class="layui-form-label">{{ obj.value }}</label>
+                <div class="layui-input-block">
+                    <input type="text" name="{{ obj.key }}" required  lay-verify="required" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+        {% endfor %}
+
+
+        <div class="layui-form-item" style="width: 500px;margin-top: 50px;margin-left:250px;">
+            <div class="layui-input-block">
+                <button type="submit" class="layui-btn" lay-submit="" lay-filter="go_recheck">签到</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script src="/static/layui.js"></script>
+<script src="/static/js/jquery.min.js"></script>
 </body>
 </html>

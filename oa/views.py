@@ -8,11 +8,18 @@ import requests
 import qrcode
 import time
 import hashlib
-
+from geopy.distance import geodesic
+from openpyxl import load_workbook
 from oa.api import is_login, check_cookie, check_login, model_to_dict, check_stu_login, \
     check_stu_login_cookie, url_change, search_items, student_check, get_check_record_table, \
-    items_to_table, update_item, search_stu_item, add_stu_to_item, generate_check_info, get_check_info_api
+    items_to_table, update_item, search_stu_item, add_stu_to_item, generate_check_info, get_check_info_api, \
+    api_init
 from django.views.decorators.clickjacking import xframe_options_sameorigin
+
+
+LOCAL_HOST = '192.168.128.143'
+item_to_name = {'name': '姓名', 'phone': '手机号', 'sex': '性别', 'age': '年龄', 'stu_number': '学号', 'college': '学院'
+         , 'major': '专业', 'cls': '班级'}
 
 
 @csrf_exempt
@@ -107,9 +114,9 @@ def make_qrcode(request):
     print(request)
     dt = request.GET.dict()
     if dt.get('api'):
-        url = f"http://192.168.13.143:8000/{dt.get('api')}/?"
+        url = f"http://{LOCAL_HOST}:8000/{dt.get('api')}/?"
     else:
-        url = f"http://192.168.13.143:8000/stuIndex/?"
+        url = f"http://{LOCAL_HOST}:8000/stuCheck/?"
     url = url_change(url, dt)
     print(f'qrcode:{url}')
     qr = qrcode.QRCode(box_size=10, border=2)
@@ -166,6 +173,29 @@ def stu_index(request):
         return render(request, 'stu_index.html', {'res_msg': '二维码已过期'})
     res = student_check(rank['uid'], request.GET.get('cls_id'), request.GET.get('check_id'))
     return render(request, 'stu_index.html', {'res_msg': res})
+
+
+def stu_check(request):
+    if request.POST:
+        uid = request.POST.get('stu_id')
+        N = float(request.POST.get('N'))
+        E = float(request.POST.get('E'))
+        NN = float(request.GET.get('N'))
+        EE = float(request.GET.get('E'))
+        print(f'N={N}, E={E}, NN={NN}, EE={EE}')
+        if float(NN) < 90 and float(EE) < 180:
+            print(geodesic((N, E), (NN, EE)))
+        check_time = int(request.GET.get('time'))
+        t = time.time()
+        t = int(round(t * 1000))
+        if t - check_time > 15 * 1000:
+            return render(request, 'stu_index.html', {'res_msg': '二维码已过期'})
+        res = student_check(uid, request.GET.get('cls_id'), request.GET.get('check_id'))
+        return render(request, 'stu_index.html', {'res_msg': res})
+    dt = dict()
+    dt['dt'] = json.dumps(dict(request.GET))
+    print(dt['dt'])
+    return render(request, 'stu_check.html', dt)
 
 
 @xframe_options_sameorigin
@@ -264,6 +294,25 @@ def add_stu(request):
     return render(request, 'add_stu.html', dt)
 
 
+def import_item(request):
+    file = request.FILES.get('file')
+    wb = load_workbook(file)
+    sheet_names = wb.get_sheet_names()
+    ws = wb.get_sheet_by_name(sheet_names[0])
+    data_list = []
+    for rx in range(2, ws.max_row + 1):
+        w1 = ws.cell(row=rx, column=1).value
+        w2 = ws.cell(row=rx, column=2).value
+        data_list.append({'id': w1, 'name': w2})
+    # data_list = list(set(data_list))
+    print(data_list)
+    for obj in data_list:
+        add_stu_to_item(request.GET.get('item_id'), obj['id'])
+    res = {"code": 0, "msg": "", "res": 1}
+    res = json.dumps(res)
+    return HttpResponse(res)
+
+
 @xframe_options_sameorigin
 def search_stu(request):
     flag, rank = check_cookie(request)
@@ -323,13 +372,16 @@ def stu_recheck(request):
 
 # ----------------------------------------meeting_check--------------------------------------
 @xframe_options_sameorigin
-def meeting_check(request):
-    return render(request, 'meeting_check.html')
+def meeting_check_setting(request):
+    url = ""
+    if request.POST:
+        url = url_change('/mc_qrcode/?', request.POST)
+    return render(request, 'meeting_check_setting.html', {"src": url})
 
 
 def make_mc_qrcode(request):
-    dt = request.POST.dict()
-    url = f"http://192.168.13.143:8000/meetingCheckIn/?"
+    dt = request.GET.dict()
+    url = f"http://{LOCAL_HOST}:8000/meetingCheck/?"
     url = url_change(url, dt)
     qr = qrcode.QRCode(box_size=12, border=2)
     qr.add_data(url)
@@ -339,4 +391,23 @@ def make_mc_qrcode(request):
     img.save(buf)
     img_stream = buf.getvalue()
     return HttpResponse(img_stream, content_type="image/jpg")
+
+
+def meeting_check(request):
+    if request.POST:
+        print(request.POST)
+        return render(request, 'stu_index.html', {'res_msg': '签到成功'})
+    dt = dict()
+    lt = list(dict(request.GET).keys())
+    dt['item'] = []
+    for i in lt:
+        dt['item'].append({'key': i, 'value': item_to_name.get(i)})
+    print(dt)
+    return render(request, 'meeting_check.html', dt)
 # ----------------------------------------meeting_check--------------------------------------
+
+
+# 初始化整个系统
+def init(request):
+    api_init()
+    return render(request, 'stu_index.html', {"res_msg": 'ok!'})

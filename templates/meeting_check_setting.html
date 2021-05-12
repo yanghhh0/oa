@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>会议式签到</title>
+    <link rel="stylesheet" href="/static/css/layui.css" media="all">
+</head>
+<body>
+<h1 align="center" style="margin-top: 30px;">选择签到信息详情</h1>
+<form class="layui-form" action="/meetingCheckSetting/" type="post" method="post" lay-filter="formInfo" style="margin-top: 50px;">
+    <div class="layui-form-item" style="margin-left: 70px;">
+        <label class="layui-form-label">签到信息</label>
+        <div class="layui-input-block">
+            <input type="checkbox" name="stu_number" title="学号" checked>
+            <input type="checkbox" name="phone" title="手机号">
+            <input type="checkbox" name="sex" title="性别">
+            <input type="checkbox" name="age" title="年龄">
+            <input type="checkbox" name="name" title="姓名">
+            <input type="checkbox" name="college" title="学院">
+            <input type="checkbox" name="major" title="专业">
+            <input type="checkbox" name="cls" title="班级">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="formDemo" style="margin-left: 29%;">发起签到</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+    </div>
+</form>
+<div class="vertical-align-middle" id="showQRCode" align="center">
+        <img id="qrcode" width="420" height="420" src="{{ src }}">
+</div>
+<script src="/static/layui.js"></script>
+<script src="/static/js/jquery.min.js"></script>
+</body>
+</html>

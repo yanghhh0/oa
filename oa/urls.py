@@ -29,6 +29,7 @@ urlpatterns = [
     path(r'qrcode/', views.make_qrcode, name='qrcode'),
     path(r'stuLogin/', views.stu_login, name='stuLogin'),
     path(r'stuIndex/', views.stu_index, name='stuIndex'),
+    path(r'stuCheck/', views.stu_check, name='stuCheck'),
     path(r'checkSetting/', views.check_setting, name='checkSetting'),
     path(r'checkHistory/', views.check_history, name='checkHistory'),
     path(r'getCheckTable/', views.get_record_table, name='getCheckTable'),
@@ -39,11 +40,15 @@ urlpatterns = [
     path(r'searchItem/delItem/', views.del_item, name='delItem'),
     path(r'searchItem/searchStu/', views.search_stu, name='searchStu'),
     path(r'searchItem/addStu/', views.add_stu, name='addStu'),
+    path(r'searchItem/importItem/', views.import_item, name='importItem'),
     path(r'searchItem/getStuItem/', views.get_stu_item, name='getStuItem'),
     path(r'test/', views.test, name='test'),
     path(r'index/', views.index, name='index'),
     path(r'recheck/', views.recheck, name='recheck'),
     path(r'stuRecheck/', views.stu_recheck, name='stu_recheck'),
+    path(r'meetingCheckSetting/', views.meeting_check_setting, name='meeting_check_setting'),
     path(r'meetingCheck/', views.meeting_check, name='meeting_check'),
+    path(r'mc_qrcode/', views.make_mc_qrcode, name='mc_qrcode'),
+    path(r'init/', views.init, name='init'),
 
 ]

@@ -23,7 +23,19 @@
     <div class="layui-form-item">
         <label class="layui-form-label">定位</label>
         <div class="layui-input-block">
-            <input type="checkbox" name="switch" lay-skin="switch">
+            <input id="switch" type="checkbox" name="switch" lay-skin="switch" lay-filter="position">
+        </div>
+    </div>
+    <div class="layui-form-item" style="width: 400px;margin-top: 50px;display: none" id="E_div">
+        <label class="layui-form-label">经度:</label>
+        <div class="layui-input-block">
+            <input id="E" class="layui-input" name="E" type="text" readonly>
+        </div>
+    </div>
+    <div class="layui-form-item" style="width: 400px;margin-top: 50px;display: none" id="N_div">
+        <label class="layui-form-label">纬度:</label>
+        <div class="layui-input-block">
+            <input id="N" class="layui-input" name="N" type="text" readonly>
         </div>
     </div>
 
@@ -35,5 +47,44 @@
     </div>
 </form>
 <script src="/static/layui.js"></script>
+<script src="/static/js/jquery.min.js"></script>
+<script>
+    layui.use('form', function (){
+        var form = layui.form;
+        form.on('switch(position)',function (data){
+            if(data.elem.checked===true){
+                $('#N_div').show();
+                $('#E_div').show();
+            }
+            else {
+                $('#N_div').hide();
+                $('#E_div').hide();
+            }
+        })
+    })
+    window.navigator.geolocation.getCurrentPosition(
+        function (position) {
+            var longitude = position.coords.longitude;
+            var latitude = position.coords.latitude;
+            $('#E').attr('value', longitude);
+            $('#N').attr('value', latitude);
+
+        },
+        function onError(error) {
+            //alert(error.message);
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    alert("您拒绝对获取地理位置的请求");
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    alert("位置信息是不可用的");
+                    break;
+                case error.TIMEOUT:
+                    alert("请求您的地理位置超时");
+                    break;
+            }
+        }
+    );
+</script>
 </body>
 </html>

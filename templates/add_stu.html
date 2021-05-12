@@ -11,9 +11,10 @@
     <table class="layui-hide" id="test" lay-filter="test"></table>
 </div>
 <script type="text/html" id="toolbarDemo">
-  <div class="layui-btn-container">
-    <button class="layui-btn layui-btn-sm" lay-event="addItem">增加学生</button>
-  </div>
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="addItem">增加学生</button>
+        <button class="layui-btn layui-btn-sm" lay-event="importItem" id="importItem">导入名单</button>
+    </div>
 </script>
 
 <script type="text/html" id="barDemo">
@@ -104,6 +105,22 @@ layui.use('table', function(){
   });
 });
 </script>
-
+<script>
+    layui.use('upload', function(){
+        var upload = layui.upload;
+        var itemId = {{ itemId }};
+        upload.render({
+            elem: '#importItem'
+            ,url: '/searchItem/importItem/?item_id='+itemId
+            {#,accept: 'file'#}
+            ,exts: 'xls|xlsx'
+            ,done: function (res){
+                layer.msg("导入成功!", {}, function (){
+                    location.reload();
+                });
+            }
+        })
+    });
+</script>
 </body>
 </html>

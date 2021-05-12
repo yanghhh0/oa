@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import random
 from functools import wraps
 
 from django.shortcuts import render
@@ -169,9 +170,11 @@ def get_all_check_info(uid, page=-1, limit=-1):
         info_array = CheckInfo.objects.filter(t_uid=uid)[page*limit:page*limit+limit]
     res = []
     for info in info_array:
-        res.append(model_to_dict(info))
-    if len(res):
-        print(f"res[0]：{res[0]}")
+        dt = model_to_dict(info)
+        count = len(StuItem.objects.filter(item_id=dt['item_id']))
+        CheckInfo.objects.filter(check_id=dt['check_id']).update(total_count=count)
+        dt['total_count'] = count
+        res.append(dt)
     return total, res
 
 
@@ -232,6 +235,10 @@ def search_stu_item(item_id):
 
 
 def add_stu_to_item(item_id, stu_id):
+    if not item_id:
+        return
+    if len(StuItem.objects.filter(item_id=item_id, stu_id=stu_id)):
+        return
     StuItem.objects.create(item_id=item_id, stu_id=stu_id)
 
 
@@ -256,3 +263,61 @@ def get_check_info_api(check_id):
     res['item_id'] = r.item_id
     print(res)
     return res
+
+
+def api_init():
+    # 造学生
+    names = get_names()
+    grade = 171
+    ids = get_stu_ids()
+    passwords = get_passwords()
+    k = 0
+    for i in range(20):
+        for j in range(35):
+            if len(Student.objects.filter(uid=ids[k])):
+                k = k+1
+                continue
+            Student.objects.create(uid=ids[k], password=passwords[k], name=names[k], institute='数计学院',
+                                   major='计算机', cls=grade)
+            k = k+1
+        grade = grade+1
+        if grade % 10 == 0:
+            grade = grade+1
+
+
+def get_names():
+    first_name = ["李", "王", "张", "刘", "陈", "杨", "赵", "黄", "周", "吴", "徐", "孙", "胡", "朱", "高", "林", "何", "郭", "马",
+                  "罗"]
+    second_name = ["", "顺", "信", "子", "杰", "涛", "昌", "成", "康", "星", "光", "天", "达", "安", "岩", "中", "茂", "进", "林",
+                   "有",
+                   "坚", "和", "彪", "博", "诚", "先", "敬", "震", "振", "壮", "会", "思", "群", "豪", ""]
+    third_name = ["伟", "刚", "勇", "毅", "俊", "峰", "强", "军", "洁", "梅", "琳", "素", "云", "莲", "真", "环", "雪"]
+    names = []
+    for f in first_name:
+        for s in second_name:
+            for t in third_name:
+                names.append(f + s + t)
+    random.shuffle(names)
+    return names
+
+
+def get_stu_ids():
+    res = list()
+    now = 2017010101
+    for i in range(20):
+        for j in range(1, 36):
+            res.append(now*100+j)
+        now = now+1
+    return res
+
+
+def get_passwords():
+    res = list()
+    for i in range(20):
+        for j in range(35):
+            s = random.randint(1, 30)
+            t = random.randint(0, 9999)
+            st = "%02d%04d" % (s, t)
+            res.append(st)
+    return res
+
